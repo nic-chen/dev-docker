@@ -25,7 +25,7 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-c
     && chmod +x /usr/local/bin/docker-compose
 
 RUN set -vx; \
-    curl -f -L -o docker.tgz https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${ARCH}/docker-${DOCKER_VERSION}.tgz \
+    curl -f -L -o docker.tgz https://download.docker.com/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}.tgz \
     && tar zxvf docker.tgz \
     && install -o root -g root -m 755 docker/docker /usr/local/bin/docker \
     && rm -rf docker docker.tgz
