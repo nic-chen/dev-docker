@@ -2,11 +2,9 @@ FROM openresty/openresty:1.21.4.4-0-buster-fat
 
 RUN apt-get update && apt-get install -y lsb-release && \
     CODENAME=$(lsb_release -cs) && \
-    bash -c 'tee /etc/apt/sources.list.d/ddebs.list << EOF \
-deb http://ddebs.ubuntu.com/ '"${CODENAME}"' main restricted universe multiverse \
-deb http://ddebs.ubuntu.com/ '"${CODENAME}"'-updates main restricted universe multiverse \
-deb http://ddebs.ubuntu.com/ '"${CODENAME}"'-proposed main restricted universe multiverse \
-EOF'
+    echo "deb http://ddebs.ubuntu.com/ ${CODENAME} main restricted universe multiverse" | tee -a /etc/apt/sources.list.d/ddebs.list && \
+    echo "deb http://ddebs.ubuntu.com/ ${CODENAME}-updates main restricted universe multiverse" | tee -a /etc/apt/sources.list.d/ddebs.list && \
+    echo "deb http://ddebs.ubuntu.com/ ${CODENAME}-proposed main restricted universe multiverse" | tee -a /etc/apt/sources.list.d/ddebs.list
 
 RUN apt update -y \
     && apt install -y ubuntu-dbgsym-keyring \
