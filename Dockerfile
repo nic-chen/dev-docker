@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y lsb-release && \
     echo "deb http://ddebs.ubuntu.com/ ${CODENAME}-updates main restricted universe multiverse" | tee -a /etc/apt/sources.list.d/ddebs.list && \
     echo "deb http://ddebs.ubuntu.com/ ${CODENAME}-proposed main restricted universe multiverse" | tee -a /etc/apt/sources.list.d/ddebs.list
 
+RUN apt-get install -y gnupg && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C8CAB6595FDFF622
+
 RUN apt update -y \
     && apt install -y ubuntu-dbgsym-keyring \
     && apt install -y linux-image-$(uname -r)-dbgsym \
