@@ -1,36 +1,19 @@
-FROM ubuntu:latest
-
-ARG DOCKER_CHANNEL=stable
-ARG DOCKER_VERSION=20.10.8
+FROM openresty/openresty:1.21.4.4-0-buster-fat
+    
+RUN tee /etc/apt/sources.list.d/ddebs.list << EOF
+    deb http://ddebs.ubuntu.com/ $(lsb_release -cs) main restricted universe multiverse
+    deb http://ddebs.ubuntu.com/ $(lsb_release -cs)-updates  main restricted universe multiverse
+    deb http://ddebs.ubuntu.com/ $(lsb_release -cs)-proposed main restricted universe multiverse
+EOF
 
 RUN apt update -y \
-    && apt install -y software-properties-common \
-    && add-apt-repository -y ppa:longsleep/golang-backports \
-    && apt update -y \
-    && apt install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    golang-go \
-    openssh-client \
-    sudo \
-    telnet \
-    time \
-    tzdata \
-    unzip \
-    wget \
-    zip \
-    gnupg \
-    lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+    && apt install -y ubuntu-dbgsym-keyring \
+    && apt install -y linux-image-$(uname -r)-dbgsym \
+    && apt install -y systemtap gdb procps vim \
+    && cd /usr/local \
+    && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
+    && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
+    && git clone https://github.com/brendangregg/FlameGraph.git
 
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
-    && chmod +x /usr/local/bin/docker-compose
-
-ENV PATH="${PATH}:${HOME}/go/bin"
+ENV STAP_PLUS_HOME="/usr/local/stapxx"
+ENV PATH="${PATH}:/usr/local/stapxx:/usr/local/stapxx/samples:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph"
