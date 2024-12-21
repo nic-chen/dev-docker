@@ -1,6 +1,7 @@
 FROM openresty/openresty:1.21.4.4-0-buster-fat
 
-RUN CODENAME=$(lsb_release -cs) && \
+RUN pt-get update && apt-get install -y lsb-release && \
+    CODENAME=$(lsb_release -cs) && \
     bash -c 'tee /etc/apt/sources.list.d/ddebs.list << EOF \
 deb http://ddebs.ubuntu.com/ '"${CODENAME}"' main restricted universe multiverse \
 deb http://ddebs.ubuntu.com/ '"${CODENAME}"'-updates main restricted universe multiverse \
