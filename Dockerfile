@@ -1,10 +1,9 @@
-FROM api7/api7-ee-3-gateway:3.3.2
+FROM ubuntu:noble
 
 USER root
 
 RUN apt update -y \
-    && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev \
-    wget systemtap \
+    && apt install -y build-essential gdb procps vim git elfutils wget systemtap \
     && cd /usr/local \
     && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
     && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
