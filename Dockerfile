@@ -3,7 +3,8 @@ FROM api7/api7-ee-3-gateway:3.3.2
 USER root
 
 RUN apt update -y \
-    && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev libavahi-client-dev wget librpm-dev libreadline-dev \
+    && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev \
+    libavahi-client-dev wget librpm-dev libreadline-dev librpmdb-dev librpmio-dev \
     && cd /usr/local \
     && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
     && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
