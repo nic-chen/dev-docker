@@ -4,12 +4,13 @@ USER root
 
 RUN apt update -y \
     && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev \
-    libavahi-client-dev wget librpm-dev libreadline-dev rpm \
+    wget systemtap \
     && cd /usr/local \
     && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
     && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
-    && git clone https://github.com/brendangregg/FlameGraph.git
-    
+    && git clone https://github.com/brendangregg/FlameGraph.git \
+    && stap --version
+
 RUN wget http://sourceware.org/systemtap/ftp/releases/systemtap-5.1.tar.gz \
     && tar -zxvf systemtap-5.1.tar.gz && rm systemtap-5.1.tar.gz \
     && mv systemtap-5.1 /usr/local/systemtap \
