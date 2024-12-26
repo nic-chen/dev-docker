@@ -1,5 +1,7 @@
 FROM api7/api7-ee-3-gateway:3.3.2
 
+USER root
+
 RUN apt update -y \
     && apt install -y gdb procps vim git elfutils libdw-dev \
     && cd /usr/local \
