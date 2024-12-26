@@ -14,7 +14,7 @@ RUN wget http://sourceware.org/systemtap/ftp/releases/systemtap-5.1.tar.gz \
     && tar -zxvf systemtap-5.1.tar.gz && rm systemtap-5.1.tar.gz \
     && mv systemtap-5.1 /usr/local/systemtap \
     && cd /usr/local/systemtap \
-    ./configure && make all && sudo make install && stap --version
+    ./configure && make all && make install && stap --version
 
 ENV STAP_PLUS_HOME="/usr/local/stapxx"
 ENV PATH="${PATH}:/usr/local/stapxx:/usr/local/stapxx/samples:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph"
