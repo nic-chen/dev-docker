@@ -4,7 +4,7 @@ USER root
 
 RUN apt update -y \
     && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev \
-    libavahi-client-dev wget librpm-dev libreadline-dev librpmdb-dev librpmio-dev \
+    libavahi-client-dev wget librpm-dev libreadline-dev rpm \
     && cd /usr/local \
     && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
     && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
