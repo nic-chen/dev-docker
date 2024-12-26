@@ -17,5 +17,14 @@ RUN wget http://sourceware.org/systemtap/ftp/releases/systemtap-5.1.tar.gz \
     && cd /usr/local/systemtap \
     && ./configure && make all && make install && stap --version
 
+RUN apt -y install --no-install-recommends gnupg ca-certificates lsb-release \
+    && wget -O - https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/openresty.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list > /dev/null
+
+RUN wget -O - http://repos.apiseven.com/pubkey.gpg | apt-key add - \
+    && echo "deb http://repos.apiseven.com/packages/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list \
+    && apt update -y \
+    && apt install -y apisix=3.2.2-0
+
 ENV STAP_PLUS_HOME="/usr/local/stapxx"
 ENV PATH="${PATH}:/usr/local/stapxx:/usr/local/stapxx/samples:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph"
