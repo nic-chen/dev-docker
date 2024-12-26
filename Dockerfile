@@ -17,5 +17,8 @@ RUN wget http://sourceware.org/systemtap/ftp/releases/systemtap-5.1.tar.gz \
     && cd /usr/local/systemtap \
     && ./configure && make all && make install && stap --version
 
+RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.8.tar.xz \
+    && tar -xvf linux-6.8.tar.xz && rm linux-6.8.tar.xz 
+
 ENV STAP_PLUS_HOME="/usr/local/stapxx"
 ENV PATH="${PATH}:/usr/local/stapxx:/usr/local/stapxx/samples:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph"
