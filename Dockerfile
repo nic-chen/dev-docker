@@ -1,36 +1,30 @@
-FROM ubuntu:latest
+FROM ubuntu:noble
 
-ARG DOCKER_CHANNEL=stable
-ARG DOCKER_VERSION=20.10.8
+USER root
 
 RUN apt update -y \
-    && apt install -y software-properties-common \
-    && add-apt-repository -y ppa:longsleep/golang-backports \
+    && apt install -y build-essential gdb procps vim git elfutils libdw-dev libssl-dev \
+    wget systemtap librpm-dev libreadline-dev libavahi-client-dev \
+    && cd /usr/local \
+    && git clone https://github.com/api7/stapxx.git -b luajit-gc64 \
+    && git clone https://github.com/openresty/openresty-systemtap-toolkit.git \
+    && git clone https://github.com/brendangregg/FlameGraph.git \
+    && stap --version
+
+RUN wget http://sourceware.org/systemtap/ftp/releases/systemtap-5.1.tar.gz \
+    && tar -zxvf systemtap-5.1.tar.gz && rm systemtap-5.1.tar.gz \
+    && mv systemtap-5.1 /usr/local/systemtap \
+    && cd /usr/local/systemtap \
+    && ./configure && make all && make install && stap --version
+
+RUN apt -y install --no-install-recommends gnupg ca-certificates lsb-release \
+    && wget -O - https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/openresty.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list > /dev/null
+
+RUN wget -O - http://repos.apiseven.com/pubkey.gpg | apt-key add - \
+    && echo "deb http://repos.apiseven.com/packages/debian bullseye main" | tee /etc/apt/sources.list.d/apisix.list \
     && apt update -y \
-    && apt install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    golang-go \
-    openssh-client \
-    sudo \
-    telnet \
-    time \
-    tzdata \
-    unzip \
-    wget \
-    zip \
-    gnupg \
-    lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+    && apt install -y apisix=3.2.2-0
 
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
-    && chmod +x /usr/local/bin/docker-compose
-
-ENV PATH="${PATH}:${HOME}/go/bin"
+ENV STAP_PLUS_HOME="/usr/local/stapxx"
+ENV PATH="${PATH}:/usr/local/stapxx:/usr/local/stapxx/samples:/usr/local/openresty-systemtap-toolkit:/usr/local/FlameGraph"
